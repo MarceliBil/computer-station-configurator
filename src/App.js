@@ -12,7 +12,7 @@ const App = () => {
     productCategory: "",
     productPrice: ""
   })
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState(JSON.parse(localStorage.getItem('items')) || [])
   const [sort, setSort] = useState('all')
   const [category, setCategory] = useState('all')
   const [filteredItems, setFilteredItems] = useState([])
@@ -27,30 +27,15 @@ const App = () => {
   const [alert, setAlert] = useState(false)
   const [alertText, setAlertText] = useState('')
 
-
-  //GET DATA FROM LOCALSTORAGE
-  useEffect(() => {
-    if (localStorage.getItem('items') === null) {
-      updateLocalStorage()
-    }
-    else {
-      setItems(JSON.parse(localStorage.getItem('items')))
-      setCost(localStorage.getItem('cost'))
-      setNumberOfPositions(localStorage.getItem('numberOfPositions'))
-    }
-  }, [])
-
   //UPDATE THE STATE
   useEffect(() => {
-    setItems(items)
     setCost(items.map(i => i.price).map(i => parseFloat(i)).reduce((partialSum, a) => partialSum + a, 0))
     setNumberOfPositions(items.length)
-    updateLocalStorage()
+    saveToLocalStorage()
   }, [items])
 
-
-  //UPDATE THE LOCALSTORAGE
-  function updateLocalStorage() {
+  //SAVE DATA TO THE LOCALSTORAGE
+  function saveToLocalStorage() {
     localStorage.setItem('items', JSON.stringify(items))
     localStorage.setItem('cost', (items.map(i => i.price).map(i => parseFloat(i)).reduce((partialSum, a) => partialSum + a, 0)))
     localStorage.setItem('numberOfPositions', items.length)
